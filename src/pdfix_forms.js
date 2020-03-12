@@ -616,7 +616,7 @@ function do_field_event() {
 
 // field_event
 function field_event(e) {
-  var f = init_field(e.target.name);
+  var f = init_field(e.currentTarget.name);
   if (f == null)
     return;
   create_event();
@@ -626,7 +626,7 @@ function field_event(e) {
   event.source = f;
   event.maxLength = f.maxLength;
   event.willCommit = false;
-  event.value = e.target.value.toString();
+  event.value = e.currentTarget.value.toString();
 
   var ignore_event = true;
 
@@ -641,32 +641,32 @@ function field_event(e) {
       keyCode = e.charCode;
     if (keyCode != 0)
       event.change = String.fromCharCode(keyCode);
-    event.selStart = e.target.selectionStart;
-    event.selEnd = e.target.selectionEnd;
+    event.selStart = e.currentTarget.selectionStart;
+    event.selEnd = e.currentTarget.selectionEnd;
   }
   // change
   if (e.type == "change") {
     ignore_event = false;
     event.name = "Validate";   //bn: event Validate
-    if (e.target.type == "select") {
-      var index = e.target.selectedIndex;
-      console.log(e.target.options[index].value);
-      event.changeEx = e.target.options[index].value;
+    if (e.currentTarget.type == "select") {
+      var index = e.currentTarget.selectedIndex;
+      console.log(e.currentTarget.options[index].value);
+      event.changeEx = e.currentTarget.options[index].value;
       //bn: comment next lines, do_calculations was proceed 2 times (line 750 - do_calculations(f)),
       /*
       do_field_event();
       if (event.rc)
         e.preventDefault();
       else {
-        event.target.value = e.target.value;
+        event.target.value = e.currentTarget.value;
         do_calculations(f);
       }*/
     }
     else {
-      if (e.target.type == "radio" || e.target.type == "checkbox") {
+      if (e.currentTarget.type == "radio" || e.currentTarget.type == "checkbox") {
         ignore_event = true;
       }
-      event.value = e.target.value;
+      event.value = e.currentTarget.value;
     }
     event.willCommit = true;
   }
@@ -674,12 +674,12 @@ function field_event(e) {
   if (e.type == "click") {
     ignore_event = false;
     event.name = "Mouse Up";
-    if (e.target.type != "radio" && e.target.type != "checkbox" && e.target.type != "button") {
+    if (e.currentTarget.type != "radio" && e.currentTarget.type != "checkbox" && e.currentTarget.type != "button") {
       ignore_event = true;
     }
-    event.value = e.target.value;
-    if (e.target.type == "checkbox") {
-      if (!e.target.checked) event.value = "Off";
+    event.value = e.currentTarget.value;
+    if (e.currentTarget.type == "checkbox") {
+      if (!e.currentTarget.checked) event.value = "Off";
     }
     event.willCommit = true;
   }
@@ -687,20 +687,20 @@ function field_event(e) {
   if (e.type == "focus") {
     ignore_event = false;
     event.name = "Focus";
-    if (e.target.type != "radio" && e.target.type != "checkbox") { //bn: prevent to rewrite the radio button value
-      e.target.value = f.value;
+    if (e.currentTarget.type != "radio" && e.currentTarget.type != "checkbox") { //bn: prevent to rewrite the radio button value
+      e.currentTarget.value = f.value;
     }
-    e.target.addEventListener("keystroke", field_event);
-    e.target.addEventListener("blur", field_event);
+    e.currentTarget.addEventListener("keystroke", field_event);
+    e.currentTarget.addEventListener("blur", field_event);
   }
   // blur
   if (e.type == "blur") {
     ignore_event = false;
     event.name = "Blur";
-    e.target.removeEventListener("keystroke", field_event);
-    e.target.removeEventListener("blur", field_event);
-    if (e.target.type != "radio" && e.target.type != "checkbox") { //bn: prevent to rewrite the radio button value
-      e.target.value = f.getFormattedValue();
+    e.currentTarget.removeEventListener("keystroke", field_event);
+    e.currentTarget.removeEventListener("blur", field_event);
+    if (e.currentTarget.type != "radio" && e.currentTarget.type != "checkbox") { //bn: prevent to rewrite the radio button value
+      e.currentTarget.value = f.getFormattedValue();
     }
   }
 
@@ -709,20 +709,20 @@ function field_event(e) {
     do_field_event();
     if (event.rc == false) {
       if (event.willCommit) {
-        if (e.target.type == "checkbox")
-          e.target.checked = event.value === e.target.value;
+        if (e.currentTarget.type == "checkbox")
+          e.currentTarget.checked = event.value === e.currentTarget.value;
         else
-          e.target.value = event.target.value;
+          e.currentTarget.value = event.target.value;
       }
       else
         e.preventDefault();
     }
     else if (event.willCommit) {
       event.target.value = event.value;
-      if (e.target.type == "checkbox")
-        e.target.checked = event.value === e.target.value;
+      if (e.currentTarget.type == "checkbox")
+        e.currentTarget.checked = event.value === e.currentTarget.value;
       else
-        e.target.value = event.target.value;
+        e.currentTarget.value = event.target.value;
       do_calculations(f);
     }
   }
